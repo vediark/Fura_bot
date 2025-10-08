@@ -1,23 +1,38 @@
 const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 
-// Токен вашего бота из BotFather
-const TOKEN = process.env.BOT_TOKEN || "";
+// Токен вашего бота (получить у BotFather)
+const BOT_TOKEN = "<TOKEN>";
 
 // Настройки сервера Express
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Создание экземпляра Telegram-бота
-const bot = new TelegramBot(TOKEN);
+const bot = new TelegramBot(BOT_TOKEN, { polling: false }); // Используем webhooks, не polling
 
-// Обработчик старта бота
-bot.onText(/\/start/, async (msg) => {
-  const chatId = msg.chat.id;
-  await bot.sendMessage(chatId, "Привет! Добро пожаловать в Fura_bot!");
+// Настройка Webhook для приема уведомлений от Telegram
+let serverUrl = process.env.PROJECT_DOMAIN ? `https://${process.env.PROJECT_DOMAIN}.glitch.me/bot/${BOT_TOKEN}` : '';
+if (serverUrl) {
+  bot.setWebHook(serverUrl);
+} else {
+  throw new Error("PROJECT_DOMAIN not found. Please check your environment variables or use polling mode.");
+}
+
+// Обработка входящих сообщений
+bot.on("message", async (msg) => {
+  if (msg.text === '/start') {
+    await bot.sendMessage(msg.chat.id, 'Привет! Я твой Telegram-бот.');
+  } else {
+    await bot.sendMessage(msg.chat.id, 'Я тебя услышал!');
+  }
 });
 
-// Запуск сервера
-app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
+// Веб-хук для Telegram
+app.post(`/bot/${BOT_TOKEN}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.end();
+});
 
-console.log("Telegram bot is ready.");
+// Старт сервера
+app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
