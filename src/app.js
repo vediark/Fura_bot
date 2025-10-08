@@ -1,8 +1,8 @@
 const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 
-// Токен вашего бота (получить у BotFather)
-const BOT_TOKEN = "<TOKEN>";
+// Токен вашего бота из BotFather
+const BOT_TOKEN = process.env.BOT_TOKEN || "";
 
 // Настройки сервера Express
 const PORT = process.env.PORT || 3000;
@@ -12,7 +12,7 @@ const app = express();
 const bot = new TelegramBot(BOT_TOKEN, { polling: false }); // Используем webhooks, не polling
 
 // Настройка Webhook для приема уведомлений от Telegram
-let serverUrl = process.env.PROJECT_DOMAIN ? `https://${process.env.PROJECT_DOMAIN}.glitch.me/bot/${BOT_TOKEN}` : '';
+let serverUrl = process.env.PROJECT_DOMAIN ? `https://${process.env.PROJECT_DOMAIN}.netlify.app/bot/${BOT_TOKEN}` : '';
 if (serverUrl) {
   bot.setWebHook(serverUrl);
 } else {
