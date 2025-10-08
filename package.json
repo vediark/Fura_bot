@@ -1,1 +1,15 @@
-
+{
+  "name": "fura-bot",
+  "version": "1.0.0",
+  "description": "Telegram-бот для продажи товаров и криптокоинов",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-telegram-bot-api": "^0.54.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Василий Вершинин",
+  "license": "ISC"
+}
